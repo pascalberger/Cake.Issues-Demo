@@ -3,6 +3,8 @@
 #addin "Cake.Issues.InspectCode&prerelease"
 #addin "Cake.Issues.Reporting&prerelease"
 #addin "Cake.Issues.Reporting.Generic&prerelease"
+#addin "Cake.Issues.PullRequests&prerelease"
+#addin "nuget:https://www.myget.org/F/cake-contrib/api/v3/index.json?package=Cake.Issues.PullRequests.AppVeyor&prerelease"
 #tool "nuget:?package=MSBuild.Extension.Pack"
 #tool "nuget:?package=JetBrains.ReSharper.CommandLineTools"
 
@@ -109,7 +111,24 @@ Task("Create-Report")
     }
 });
 
+Task("Report-IssuesToPullRequest")
+    .IsDependentOn("Read-Issues")
+    .WithCriteria(() => AppVeyor.IsRunningOnAppVeyor)
+    .Does(() =>
+{
+    var appVeyorSettings =
+        new AppVeyorBuildSettings();
+
+    ReportIssuesToPullRequest(
+        MsBuildIssuesFromFilePath(
+            msBuildXmlFileLoggerLog,
+            MsBuildXmlFileLoggerFormat),
+        AppVeyorBuilds(appVeyorSettings),
+        repoRootFolder);
+});
+
 Task("Default")
+    .IsDependentOn("Report-IssuesToPullRequest")
     .IsDependentOn("Create-Report");
 
 RunTarget(target);
