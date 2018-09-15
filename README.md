@@ -1,4 +1,4 @@
-# Cake.Issues-Test
+# Cake.Issues-Demo
 
 [![Build status](https://ci.appveyor.com/api/projects/status/8255u6f1jxx7ffvv?svg=true)](https://ci.appveyor.com/project/pascalberger/cake-issues-test)
 
