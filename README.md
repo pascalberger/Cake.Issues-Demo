@@ -8,4 +8,4 @@ It contains a build script which builds a sample application, runs some code ana
 
 Try it out by forking the repo and creating a pull request.
 
-[Cake.Issues]: https://cake-contrib.github.io/Cake.Issues.Website
+[Cake.Issues]: https://cakeissues.net
