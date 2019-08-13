@@ -1,6 +1,6 @@
 # Cake.Issues-Demo
 
-[![Build status](https://ci.appveyor.com/api/projects/status/8255u6f1jxx7ffvv?svg=true)](https://ci.appveyor.com/project/pascalberger/cake-issues-test)
+[![Build status](https://ci.appveyor.com/api/projects/status/lbmqhkbfnrm5v821?svg=true)](https://ci.appveyor.com/project/pascalberger/cake-issues-demo)
 
 Repository for testing [Cake.Issues] together with GitHub and [AppVeyor](https://www.appveyor.com/).
 
