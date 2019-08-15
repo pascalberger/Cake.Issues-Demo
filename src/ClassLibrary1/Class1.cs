@@ -10,7 +10,7 @@ namespace ClassLibrary1
     {
         public void Foo()
         {
-            var foo = "foo";
+            var foo = "test";
         }
     }
 }
