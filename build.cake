@@ -56,10 +56,7 @@ Task("Read-Issues")
     .Does(() =>
 {
     var settings =
-        new ReadIssuesSettings(repoRootFolder)
-        {
-            Format = IssueCommentFormat.Markdown
-        };
+        new ReadIssuesSettings(repoRootFolder);
 
     // Read issues from log files.
     issues.AddRange(
@@ -94,7 +91,7 @@ Task("Create-Report")
 {
     var reportFile = outputFolder.CombineWithFilePath("report.html");
 
-    var settings = 
+    var settings =
         GenericIssueReportFormatSettings
             .FromEmbeddedTemplate(GenericIssueReportTemplate.HtmlDxDataGrid)
             .WithOption(HtmlDxDataGridOption.Theme, DevExtremeTheme.MaterialBlueLight);
