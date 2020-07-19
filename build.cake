@@ -13,6 +13,7 @@ var target = Argument("target", "Default");
 var repoRootFolder = MakeAbsolute(Directory("./"));
 var outputFolder = repoRootFolder.Combine("output");
 var msBuildXmlFileLoggerLog = outputFolder.CombineWithFilePath("msbuild-xmlfilelogger.log");
+var msBuildBinLog = outputFolder.CombineWithFilePath("msbuild.binlog");
 var inspectCodeLog = outputFolder.CombineWithFilePath("inspectCode.log");
 var issues = new List<IIssue>();
 
@@ -36,8 +37,15 @@ Task("Build")
                 "logfile=\"{0}\";verbosity=Detailed;encoding=UTF-8",
                 msBuildXmlFileLoggerLog));
 
+    settings.BinaryLogger = new MSBuildBinaryLogSettings() { Enabled = true, FileName = msBuildBinLog.FullPath };
+
     EnsureDirectoryExists(outputFolder);
     MSBuild(solutionFile, settings);
+
+    if (AppVeyor.IsRunningOnAppVeyor)
+    {
+        AppVeyor.UploadArtifact(msBuildBinLog.FullPath);
+    }
 });
 
 Task("Run-InspectCode")
@@ -55,21 +63,35 @@ Task("Read-Issues")
     .IsDependentOn("Run-InspectCode")
     .Does(() =>
 {
-    var settings =
-        new ReadIssuesSettings(repoRootFolder);
-
     // Read issues from log files.
+    issues.AddRange(
+        ReadIssues(
+            MsBuildIssuesFromFilePath(
+                msBuildXmlFileLoggerLog,
+                MsBuildXmlFileLoggerFormat),
+            new ReadIssuesSettings(repoRootFolder)
+            {
+                Run = "MsBuildXmlFileLogger"
+            }));
+
+    issues.AddRange(
+        ReadIssues(
+            MsBuildIssuesFromFilePath(
+                msBuildBinLog,
+                MsBuildBinaryLogFileFormat),
+            new ReadIssuesSettings(repoRootFolder)
+            {
+                Run = "MsBuildBinaryLogFile"
+            }));
+
     issues.AddRange(
         ReadIssues(
             new List<IIssueProvider>
             {
-                MsBuildIssuesFromFilePath(
-                    msBuildXmlFileLoggerLog,
-                    MsBuildXmlFileLoggerFormat),
                 InspectCodeIssuesFromFilePath(
                     inspectCodeLog)
             },
-            settings));
+            new ReadIssuesSettings(repoRootFolder)));
 
     // Add manual issue.
     issues.Add(
