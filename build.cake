@@ -37,7 +37,12 @@ Task("Build")
                 "logfile=\"{0}\";verbosity=Detailed;encoding=UTF-8",
                 msBuildXmlFileLoggerLog));
 
-    settings.BinaryLogger = new MSBuildBinaryLogSettings() { Enabled = true, FileName = msBuildBinLog.FullPath };
+    // Binary Logger (use version from Cake.Issues.MsBuild to avoid unsupported file format versions)
+    settings =
+        settings.WithLogger(
+            Context.Tools.Resolve("Cake.Issues.MsBuild*/**/StructuredLogger.dll").FullPath,
+            "BinaryLogger",
+            msBuildBinLog.FullPath);
 
     EnsureDirectoryExists(outputFolder);
     MSBuild(solutionFile, settings);
